@@ -1,0 +1,26 @@
+group 'com.github.byrage'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile files ('lib/com.mysql.jdbc_5.1.5.jar')
+    compile files ('lib/ojdbc6.jar')
+
+    compile 'org.dbunit:dbunit:2.5.2'
+    compile 'org.apache.commons:commons-lang3:3.4'
+
+    testCompile 'com.h2database:h2:1.4.191'
+    testCompile 'junit:junit:4.12'
+}
+
+sourceSets.main.java.srcDirs = ['src/main/java']
+mainClassName = 'byrage.DataSetExtractor'
