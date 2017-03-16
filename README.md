@@ -6,7 +6,8 @@ Fill some properties in config.properties and Just execute `gradle run`
 
 If your config is all clear, DataSet xml file is created.
 
-##### Properties
+
+### Properties
 1. TYPE : database type. supporting database type are MySQL and Oracle.
 2. HOST = database host
 3. PORT = database port
@@ -18,7 +19,7 @@ If your config is all clear, DataSet xml file is created.
 - multiple table separator = '/'
 8. OUTPUT_FILE_NAME = output file name. extension is XML.
 
-##### Example
+### Example
 ```
 TYPE=mysql
 HOST=localhost
