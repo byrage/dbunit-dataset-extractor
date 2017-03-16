@@ -1,9 +1,11 @@
 package byrage.extractor.model;
 
+import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Properties;
 
+@Data
 public class Config {
 
     private static final String PROPERTY_TYPE = "TYPE";
@@ -15,13 +17,22 @@ public class Config {
     private static final String PROPERTY_TABLES_AND_QUERIES = "TABLES_AND_QUERIES";
     private static final String PROPERTY_OUTPUT_FILE_NAME = "OUTPUT_FILE_NAME";
 
+    @Setter(AccessLevel.NONE)
     private DbType type;
+
     private String host;
+
     private String port;
+
     private String dbName;
+
     private String id;
+
     private String password;
+
+    @Setter(AccessLevel.NONE)
     private String[] tablesAndQueries;
+
     private String outputFileName;
 
     public Config(Properties prop) {
@@ -36,83 +47,13 @@ public class Config {
         setOutputFileName(prop.getProperty(PROPERTY_OUTPUT_FILE_NAME));
     }
 
-    public DbType getType() {
-
-        return type;
-    }
-
     public void setType(String type) {
 
         this.type = DbType.getDbTypeByString(type);
     }
 
-    public String getHost() {
-
-        return host;
-    }
-
-    public void setHost(String host) {
-
-        this.host = host;
-    }
-
-    public String getPort() {
-
-        return port;
-    }
-
-    public void setPort(String port) {
-
-        this.port = port;
-    }
-
-    public String getDbName() {
-
-        return dbName;
-    }
-
-    public void setDbName(String dbName) {
-
-        this.dbName = dbName;
-    }
-
-    public String getId() {
-
-        return id;
-    }
-
-    public void setId(String id) {
-
-        this.id = id;
-    }
-
-    public String getPassword() {
-
-        return password;
-    }
-
-    public void setPassword(String password) {
-
-        this.password = password;
-    }
-
-    public String[] getTablesAndQueries() {
-
-        return tablesAndQueries;
-    }
-
     public void setTablesAndQueries(String tablesAndQueries) {
 
         this.tablesAndQueries = StringUtils.split(tablesAndQueries, "/");
-    }
-
-    public String getOutputFileName() {
-
-        return outputFileName;
-    }
-
-    public void setOutputFileName(String outputFileName) {
-
-        this.outputFileName = outputFileName;
     }
 }

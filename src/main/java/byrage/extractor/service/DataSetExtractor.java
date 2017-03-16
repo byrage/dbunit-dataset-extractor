@@ -2,6 +2,7 @@ package byrage.extractor.service;
 
 import byrage.extractor.model.Config;
 import byrage.extractor.model.DbType;
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.StringUtils;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
@@ -11,7 +12,10 @@ import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
@@ -27,7 +31,8 @@ public class DataSetExtractor {
     public boolean extract() {
 
         try {
-            Config config = loadConfig();
+            InputStream fileInputStream = new FileInputStream(CONFIG_PROPERTIES);
+            Config config = loadConfig(fileInputStream);
             log.info("output file={}", config.getOutputFileName() + DATA_SET_EXTENSION);
 
             QueryDataSet dataSet = createDataSet(config);
@@ -40,21 +45,20 @@ public class DataSetExtractor {
         }
     }
 
-    Config loadConfig() throws IOException {
+    @VisibleForTesting
+    Config loadConfig(InputStream fileInputStream) throws IOException {
 
         try {
-            InputStream inputStream = new FileInputStream(CONFIG_PROPERTIES);
             Properties prop = new Properties();
-            prop.load(inputStream);
+            prop.load(fileInputStream);
 
             return new Config(prop);
         } catch (IOException e) {
             throw new IOException("loadConfig is failed.", e);
         }
-
     }
 
-    QueryDataSet createDataSet(Config config) throws Exception {
+    private QueryDataSet createDataSet(Config config) throws Exception {
 
         try {
             DbType dbType = config.getType();

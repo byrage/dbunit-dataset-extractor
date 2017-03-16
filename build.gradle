@@ -16,13 +16,18 @@ dependencies {
     compile files ('lib/ojdbc6.jar')
 
     compile 'org.dbunit:dbunit:2.5.2'
-    compile 'org.apache.commons:commons-lang3:3.4'
 
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.google.guava:guava:21.0'
+    compile 'org.projectlombok:lombok:1.16.14'
     compile 'ch.qos.logback:logback-core:1.2.1'
     compile 'ch.qos.logback:logback-classic:1.2.1'
 
+
     testCompile 'com.h2database:h2:1.4.191'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.7.17'
+    testCompile 'com.google.jimfs:jimfs:1.1'
 }
 
 sourceSets.main.java.srcDirs = ['src/main/java']
