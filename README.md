@@ -1,12 +1,12 @@
 # DbUnitDataSetExtractor
 
-this project is help you to make easy [DBUnit](http://dbunit.sourceforge.net/) DataSet file following your database type and queries.
+This project is help you to make easy [DBUnit](http://dbunit.sourceforge.net/) DataSet file following your database type and queries.
 
 Fill some properties in config.properties and Just execute `gradle run` 
 
-if your config is all clear, DataSet xml file is created.
+If your config is all clear, DataSet xml file is created.
 
-##### properties
+##### Properties
 1. TYPE : database type. supporting database type are MySQL and Oracle.
 2. HOST = database host
 3. PORT = database port
@@ -18,7 +18,7 @@ if your config is all clear, DataSet xml file is created.
 - multiple table separator = '/'
 8. OUTPUT_FILE_NAME = output file name. extension is XML.
 
-##### config.properties example 
+##### Example
 ```
 TYPE=mysql
 HOST=localhost
