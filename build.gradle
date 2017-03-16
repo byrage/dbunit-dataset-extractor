@@ -26,4 +26,4 @@ dependencies {
 }
 
 sourceSets.main.java.srcDirs = ['src/main/java']
-mainClassName = 'byrage.DataSetExtractor'
+mainClassName = 'byrage.extractor.Application'
