@@ -15,8 +15,9 @@ If your config is all clear, DataSet xml file is created.
 5. ID = database login id
 6. PASSWORD = database login password
 7. TABLES_AND_QUERIES = what you want to extract table name and query. if you want to extract all rows in table, input table name only.
-- table and query separator = '-'
-- multiple table separator = '/'
+- All Tables = '*'
+- Table and Query Separator = '-'
+- Multiple Table Separator = '/'
 8. OUTPUT_FILE_NAME = output file name. extension is XML.
 
 ### Example
