@@ -1,4 +1,4 @@
-# DbUnitDataSetExtractor
+# DBUnitDataSetExtractor
 
 This project is help you to make easy [DBUnit](http://dbunit.sourceforge.net/) DataSet file following your database type and queries.
 
