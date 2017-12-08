@@ -2,13 +2,15 @@ package byrage.extractor.model;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
+import org.dbunit.ext.mssql.MsSqlDataTypeFactory;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.ext.oracle.OracleDataTypeFactory;
 
 public enum DbType {
 
     MySQL("com.mysql.jdbc.Driver", "jdbc:mysql://", MySqlDataTypeFactory.class),
-    Oracle("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@", OracleDataTypeFactory.class);
+    Oracle("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@", OracleDataTypeFactory.class),
+    MsSql("com.microsoft.sqlserver.jdbc.SQLServerDriver", "jdbc:sqlserver://", MsSqlDataTypeFactory.class);
 
     private String driverName;
     private String jdbcPrefix;

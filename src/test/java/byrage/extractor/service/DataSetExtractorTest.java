@@ -16,6 +16,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -112,10 +113,30 @@ public class DataSetExtractorTest {
     }
 
     @Test
+    public void loadConfig_propertyType_MSSQL_IgnoreCase() throws Exception {
+
+        // given
+        String[] types = {"mssql", "MSSQL", "MSSql"};
+        for (String type : types) {
+
+            final String fileName = "test.properties";
+            final String fileContent = buildPropertiesContent(type);
+
+            Path path = createTestFile(fileName, fileContent);
+
+            // when
+            Config config = dataSetExtractor.loadConfig(Files.newInputStream(path));
+
+            // then
+            assertThat(config.getType(), is(DbType.MsSql));
+        }
+    }
+
+    @Test
     public void loadConfig_propertyTypeInvalid() throws Exception {
 
         // given
-        String[] types = {"null", null, "", "MsSql", "H2"};
+        String[] types = {"null", null, "", "MariaDB", "H2"};
         for (String type : types) {
 
             final String fileName = "test.properties";
@@ -126,6 +147,7 @@ public class DataSetExtractorTest {
             // when
             try {
                 dataSetExtractor.loadConfig(Files.newInputStream(path));
+                fail("exception is not occurred. types="+type);
             } catch (Exception e) {
                 // then
                 assertThat(e instanceof IllegalArgumentException, is(true));

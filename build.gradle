@@ -14,6 +14,7 @@ repositories {
 dependencies {
     compile files ('lib/com.mysql.jdbc_5.1.5.jar')
     compile files ('lib/ojdbc6.jar')
+    compile 'com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8'
 
     compile 'org.dbunit:dbunit:2.5.2'
 
