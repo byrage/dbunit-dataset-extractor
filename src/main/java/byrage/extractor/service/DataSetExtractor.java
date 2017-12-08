@@ -28,7 +28,7 @@ public class DataSetExtractor {
     private Connection connection;
     private IDatabaseConnection dbConnection;
 
-    public boolean extract() {
+    public boolean run() {
 
         String outputFile = "";
         try {
@@ -82,6 +82,7 @@ public class DataSetExtractor {
             DbType dbType = config.getType();
             Class.forName(dbType.getDriverName());
             String url = dbType.getJdbcPrefix() + config.getHost() + ":" + config.getPort() + "/" + config.getDbName();
+            log.info("url={}", url);
 
             connection = DriverManager.getConnection(url, config.getId(), config.getPassword());
             dbConnection = new DatabaseConnection(connection);

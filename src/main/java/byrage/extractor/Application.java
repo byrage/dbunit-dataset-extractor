@@ -12,9 +12,9 @@ public class Application {
 
         DataSetExtractor extractor = new DataSetExtractor();
 
-        boolean isSuccess = extractor.extract();
+        boolean isSuccess = extractor.run();
         if (isSuccess) {
-            log.info("writing XmlDataSet is completed.");
+            log.info("XmlDataSet file is created.");
         }
     }
 }
