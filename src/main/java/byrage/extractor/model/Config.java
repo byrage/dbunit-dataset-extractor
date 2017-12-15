@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Properties;
 
-@Data
+@Getter
 public class Config {
 
     private static final String PROPERTY_TYPE = "TYPE";
@@ -17,34 +17,41 @@ public class Config {
     private static final String PROPERTY_TABLES_AND_QUERIES = "TABLES_AND_QUERIES";
     private static final String PROPERTY_OUTPUT_FILE_NAME = "OUTPUT_FILE_NAME";
 
-    @Setter(AccessLevel.NONE)
-    private DbType type;
-
+    private String outputFileName;
     private String host;
-
     private String port;
-
     private String dbName;
-
     private String id;
-
     private String password;
 
-    @Setter(AccessLevel.NONE)
+    private DbType type;
+    private String url;
     private String[] tablesAndQueries;
-
-    private String outputFileName;
 
     public Config(Properties prop) {
 
-        setType(prop.getProperty(PROPERTY_TYPE));
-        setHost(prop.getProperty(PROPERTY_HOST));
-        setPort(prop.getProperty(PROPERTY_PORT));
-        setDbName(prop.getProperty(PROPERTY_DB_NAME));
-        setId(prop.getProperty(PROPERTY_ID));
-        setPassword(prop.getProperty(PROPERTY_PASSWORD));
-        setTablesAndQueries(prop.getProperty(PROPERTY_TABLES_AND_QUERIES));
-        setOutputFileName(prop.getProperty(PROPERTY_OUTPUT_FILE_NAME));
+        this.outputFileName = prop.getProperty(PROPERTY_OUTPUT_FILE_NAME);
+        this.host = (prop.getProperty(PROPERTY_HOST));
+        this.port = (prop.getProperty(PROPERTY_PORT));
+        this.dbName = (prop.getProperty(PROPERTY_DB_NAME));
+        this.id = (prop.getProperty(PROPERTY_ID));
+        this.password = (prop.getProperty(PROPERTY_PASSWORD));
+
+        this.setType(prop.getProperty(PROPERTY_TYPE));
+        this.setUrl();
+        this.setTablesAndQueries(prop.getProperty(PROPERTY_TABLES_AND_QUERIES));
+    }
+
+    private void setUrl() {
+
+        String format;
+        if (this.type.equals(DbType.MsSql)) {
+            format = "%s%s:%s;database=%s";
+        } else {
+            format = "%s%s:%s/%s";
+        }
+
+        this.url = String.format(format, this.type.getJdbcPrefix(), this.host, this.port, this.dbName);
     }
 
     public void setType(String type) {

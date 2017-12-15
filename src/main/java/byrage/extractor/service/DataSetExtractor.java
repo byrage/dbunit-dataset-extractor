@@ -81,10 +81,7 @@ public class DataSetExtractor {
         try {
             DbType dbType = config.getType();
             Class.forName(dbType.getDriverName());
-            String url = dbType.getJdbcPrefix() + config.getHost() + ":" + config.getPort() + "/" + config.getDbName();
-            log.info("url={}", url);
-
-            connection = DriverManager.getConnection(url, config.getId(), config.getPassword());
+            connection = DriverManager.getConnection(config.getUrl(), config.getId(), config.getPassword());
             dbConnection = new DatabaseConnection(connection);
 
             DatabaseConfig dbConfig = dbConnection.getConfig();
