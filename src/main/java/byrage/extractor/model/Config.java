@@ -1,21 +1,25 @@
 package byrage.extractor.model;
 
-import lombok.*;
-import org.apache.commons.lang3.StringUtils;
+import lombok.Getter;
 
+import java.io.IOException;
 import java.util.Properties;
+
+import static byrage.extractor.util.ExtractUtil.readResourceAsString;
 
 @Getter
 public class Config {
 
+    private static final String PROPERTY_OUTPUT_FILE_NAME = "OUTPUT_FILE_NAME";
     private static final String PROPERTY_TYPE = "TYPE";
     private static final String PROPERTY_HOST = "HOST";
     private static final String PROPERTY_PORT = "PORT";
     private static final String PROPERTY_DB_NAME = "DB_NAME";
     private static final String PROPERTY_ID = "ID";
     private static final String PROPERTY_PASSWORD = "PASSWORD";
-    private static final String PROPERTY_QUERIES = "QUERIES";
-    private static final String PROPERTY_OUTPUT_FILE_NAME = "OUTPUT_FILE_NAME";
+    private static final String PROPERTY_ROW_NAME = "ROW_NAME";
+
+    private static final String QUERY_FILE = "query.sql";
 
     private String outputFileName;
     private String host;
@@ -26,20 +30,27 @@ public class Config {
 
     private DbType type;
     private String url;
-    private String[] queries;
+    private String rowName;
+    private String query;
 
-    public Config(Properties prop) {
+    public Config(Properties prop) throws IOException {
 
         this.outputFileName = prop.getProperty(PROPERTY_OUTPUT_FILE_NAME);
-        this.host = (prop.getProperty(PROPERTY_HOST));
-        this.port = (prop.getProperty(PROPERTY_PORT));
-        this.dbName = (prop.getProperty(PROPERTY_DB_NAME));
-        this.id = (prop.getProperty(PROPERTY_ID));
-        this.password = (prop.getProperty(PROPERTY_PASSWORD));
+        this.host = prop.getProperty(PROPERTY_HOST);
+        this.port = prop.getProperty(PROPERTY_PORT);
+        this.dbName = prop.getProperty(PROPERTY_DB_NAME);
+        this.id = prop.getProperty(PROPERTY_ID);
+        this.password = prop.getProperty(PROPERTY_PASSWORD);
+        this.rowName = prop.getProperty(PROPERTY_ROW_NAME);
 
         this.setType(prop.getProperty(PROPERTY_TYPE));
         this.setUrl();
-        this.setQueries(prop.getProperty(PROPERTY_QUERIES));
+        this.fetchQuery(QUERY_FILE);
+    }
+
+    private void setType(String type) {
+
+        this.type = DbType.getDbTypeByString(type);
     }
 
     private void setUrl() {
@@ -54,13 +65,9 @@ public class Config {
         this.url = String.format(format, this.type.getJdbcPrefix(), this.host, this.port, this.dbName);
     }
 
-    public void setType(String type) {
+    private void fetchQuery(String queryFile) throws IOException {
 
-        this.type = DbType.getDbTypeByString(type);
-    }
+        this.query = readResourceAsString(queryFile);
 
-    public void setQueries(String queries) {
-
-        this.queries = StringUtils.split(queries, "/");
     }
 }

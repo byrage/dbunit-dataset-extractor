@@ -11,10 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import static byrage.extractor.util.ExtractUtil.readResource;
 
 public class DataSetExtractor {
 
@@ -32,30 +35,19 @@ public class DataSetExtractor {
 
         String outputFile = "";
         try {
-            InputStream fileInputStream = new FileInputStream(CONFIG_PROPERTIES);
-            Config config = loadConfig(fileInputStream);
+            Config config = loadConfig(CONFIG_PROPERTIES);
 
-            if (StringUtils.isBlank(config.getOutputFileName())) {
-                throw new IllegalArgumentException("output file name is invalid.");
-            } else {
-                outputFile = config.getOutputFileName() + DATA_SET_EXTENSION;
-                log.info("output file={}", outputFile);
-            }
+            outputFile = config.getOutputFileName() + DATA_SET_EXTENSION;
+            log.info("output file name={}", outputFile);
 
             IDatabaseConnection connection = getConnection(config);
-            IDataSet dataSet;
-
-            if (config.getQueries().length == 1 && StringUtils.equals(config.getQueries()[0], ALL_TABLES)) {
-                dataSet = createAllDataSet(connection);
-            } else {
-                dataSet = createDataSet(connection, config.getQueries());
-            }
+            IDataSet dataSet = createDataSet(connection, config.getRowName(), config.getQuery());
 
             FlatXmlDataSet.write(dataSet, new FileOutputStream(outputFile));
             return true;
         } catch (Exception e) {
             cleanFile(outputFile);
-            log.error("extracting data set is failed.", e);
+            log.error("extracting data set is failed.", e.getMessage());
             return false;
         } finally {
             try { dbConnection.close(); } catch (SQLException e) {}
@@ -64,13 +56,37 @@ public class DataSetExtractor {
     }
 
     @VisibleForTesting
-    Config loadConfig(InputStream fileInputStream) throws IOException {
-
+    Config loadConfig(String propertyFileName) throws IOException, URISyntaxException {
         try {
-            Properties prop = new Properties();
-            prop.load(fileInputStream);
 
-            return new Config(prop);
+            InputStream is = new FileInputStream(new File(readResource(propertyFileName).getFile()));
+            Properties prop = new Properties();
+            prop.load(is);
+
+            Config config = new Config(prop);
+            log.debug("query={}", config.getQuery());
+            if (StringUtils.isBlank(config.getOutputFileName())) {
+                throw new IllegalArgumentException("output file name is invalid.");
+            }
+
+            return config;
+        } catch (IOException e) {
+            throw new IOException("loadConfig is failed.", e);
+        }
+    }
+
+    @VisibleForTesting
+    Config loadConfig(InputStream inputStream) throws IOException, URISyntaxException {
+        try {
+
+            Properties prop = new Properties();
+            prop.load(inputStream);
+
+            Config config = new Config(prop);
+            if (StringUtils.isBlank(config.getOutputFileName())) {
+                throw new IllegalArgumentException("output file name is blank.");
+            }
+            return config;
         } catch (IOException e) {
             throw new IOException("loadConfig is failed.", e);
         }
@@ -92,29 +108,20 @@ public class DataSetExtractor {
         }
     }
 
-    private QueryDataSet createDataSet(IDatabaseConnection connection, String[] queries) throws AmbiguousTableNameException {
+    private QueryDataSet createDataSet(IDatabaseConnection connection, String rowName, String query) throws AmbiguousTableNameException {
 
         try {
             QueryDataSet dataSet = new QueryDataSet(connection);
 
-            for (String query : queries) {
-                if (StringUtils.contains(query, QUERIES_SEPARATOR)) {
-                    String[] s = StringUtils.split(query, QUERIES_SEPARATOR);
-                    dataSet.addTable(s[0].trim(), s[1].trim());
-                } else {
-                    dataSet.addTable(query.trim());
-                }
+            if (StringUtils.isEmpty(rowName)) {
+                dataSet.addTable(query.trim());
+            } else {
+                dataSet.addTable(rowName.trim(), query.trim());
             }
-
             return dataSet;
         } catch (AmbiguousTableNameException e) {
             throw new AmbiguousTableNameException("createDataSet is failed. tableName is ambiguous", e);
         }
-    }
-
-    private IDataSet createAllDataSet(IDatabaseConnection connection) throws SQLException {
-
-        return connection.createDataSet();
     }
 
     private void cleanFile(String outputFile) {

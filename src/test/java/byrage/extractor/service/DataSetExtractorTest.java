@@ -50,11 +50,11 @@ public class DataSetExtractorTest {
         final String dbName = "test";
         final String id = "root";
         final String password = "root";
-        final String[] queries = {"user - select * from user"};
+        final String rowName = "user";
         final String outputFileName = "output";
 
         final String fileName = "test.properties";
-        final String fileContent = buildPropertiesContent(type, host, port, dbName, id, password, queries, outputFileName);
+        final String fileContent = buildPropertiesContent(outputFileName, type, host, port, dbName, id, password, rowName);
 
         Path path = createTestFile(fileName, fileContent);
 
@@ -62,14 +62,14 @@ public class DataSetExtractorTest {
         Config config = dataSetExtractor.loadConfig(Files.newInputStream(path));
 
         // then
+        assertThat(config.getOutputFileName(), is(outputFileName));
         assertThat(config.getType(), is(DbType.MySQL));
         assertThat(config.getHost(), is(host));
         assertThat(config.getPort(), is(port));
         assertThat(config.getDbName(), is(dbName));
         assertThat(config.getId(), is(id));
         assertThat(config.getPassword(), is(password));
-        assertThat(config.getQueries(), is(queries));
-        assertThat(config.getOutputFileName(), is(outputFileName));
+        assertThat(config.getRowName(), is(rowName));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class DataSetExtractorTest {
         String[] types = {"oracle", "ORACLE", "Oracle"};
         for (String type : types) {
 
-            final String fileName = "test.properties";
+            final String fileName = "config.properties";
             final String fileContent = buildPropertiesContent(type);
 
             Path path = createTestFile(fileName, fileContent);
@@ -183,20 +183,18 @@ public class DataSetExtractorTest {
         return path;
     }
 
-    private String buildPropertiesContent(String type, String host, String port, String dbName,
-            String id, String password, String[] queries, String outputFileName) {
+    private String buildPropertiesContent(String outputFileName, String type, String host, String port, String dbName,
+                                          String id, String password, String rowName) {
 
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("OUTPUT_FILE_NAME=").append(outputFileName).append("\n");
         stringBuilder.append("TYPE=").append(type).append("\n");
         stringBuilder.append("HOST=").append(host).append("\n");
         stringBuilder.append("PORT=").append(port).append("\n");
         stringBuilder.append("DB_NAME=").append(dbName).append("\n");
         stringBuilder.append("ID=").append(id).append("\n");
         stringBuilder.append("PASSWORD=").append(password).append("\n");
-        for (String query : queries) {
-            stringBuilder.append("QUERIES=").append(query).append("\n");
-        }
-        stringBuilder.append("OUTPUT_FILE_NAME=").append(outputFileName).append("\n");
+        stringBuilder.append("ROW_NAME=").append(rowName).append("\n");
 
         return stringBuilder.toString();
     }
@@ -204,6 +202,7 @@ public class DataSetExtractorTest {
     private String buildPropertiesContent(String type) {
 
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("OUTPUT_FILE_NAME=test").append("\n");
         stringBuilder.append("TYPE=").append(type).append("\n");
 
         return stringBuilder.toString();
