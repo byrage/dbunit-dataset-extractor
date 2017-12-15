@@ -22,7 +22,7 @@ public class DataSetExtractor {
 
     private static final String CONFIG_PROPERTIES = "config.properties";
     private static final String DATA_SET_EXTENSION = ".xml";
-    private static final String TABLES_AND_QUERIES_SEPARATOR = "-";
+    private static final String QUERIES_SEPARATOR = "-";
     private static final String ALL_TABLES = "*";
 
     private Connection connection;
@@ -45,10 +45,10 @@ public class DataSetExtractor {
             IDatabaseConnection connection = getConnection(config);
             IDataSet dataSet;
 
-            if (config.getTablesAndQueries().length == 1 && StringUtils.equals(config.getTablesAndQueries()[0], ALL_TABLES)) {
+            if (config.getQueries().length == 1 && StringUtils.equals(config.getQueries()[0], ALL_TABLES)) {
                 dataSet = createAllDataSet(connection);
             } else {
-                dataSet = createDataSet(connection, config.getTablesAndQueries());
+                dataSet = createDataSet(connection, config.getQueries());
             }
 
             FlatXmlDataSet.write(dataSet, new FileOutputStream(outputFile));
@@ -92,17 +92,17 @@ public class DataSetExtractor {
         }
     }
 
-    private QueryDataSet createDataSet(IDatabaseConnection connection, String[] tablesAndQueries) throws AmbiguousTableNameException {
+    private QueryDataSet createDataSet(IDatabaseConnection connection, String[] queries) throws AmbiguousTableNameException {
 
         try {
             QueryDataSet dataSet = new QueryDataSet(connection);
 
-            for (String tableAndQuery : tablesAndQueries) {
-                if (StringUtils.contains(tableAndQuery, TABLES_AND_QUERIES_SEPARATOR)) {
-                    String[] s = StringUtils.split(tableAndQuery, TABLES_AND_QUERIES_SEPARATOR);
+            for (String query : queries) {
+                if (StringUtils.contains(query, QUERIES_SEPARATOR)) {
+                    String[] s = StringUtils.split(query, QUERIES_SEPARATOR);
                     dataSet.addTable(s[0].trim(), s[1].trim());
                 } else {
-                    dataSet.addTable(tableAndQuery.trim());
+                    dataSet.addTable(query.trim());
                 }
             }
 

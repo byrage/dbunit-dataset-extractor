@@ -14,7 +14,7 @@ public class Config {
     private static final String PROPERTY_DB_NAME = "DB_NAME";
     private static final String PROPERTY_ID = "ID";
     private static final String PROPERTY_PASSWORD = "PASSWORD";
-    private static final String PROPERTY_TABLES_AND_QUERIES = "TABLES_AND_QUERIES";
+    private static final String PROPERTY_QUERIES = "QUERIES";
     private static final String PROPERTY_OUTPUT_FILE_NAME = "OUTPUT_FILE_NAME";
 
     private String outputFileName;
@@ -26,7 +26,7 @@ public class Config {
 
     private DbType type;
     private String url;
-    private String[] tablesAndQueries;
+    private String[] queries;
 
     public Config(Properties prop) {
 
@@ -39,7 +39,7 @@ public class Config {
 
         this.setType(prop.getProperty(PROPERTY_TYPE));
         this.setUrl();
-        this.setTablesAndQueries(prop.getProperty(PROPERTY_TABLES_AND_QUERIES));
+        this.setQueries(prop.getProperty(PROPERTY_QUERIES));
     }
 
     private void setUrl() {
@@ -59,8 +59,8 @@ public class Config {
         this.type = DbType.getDbTypeByString(type);
     }
 
-    public void setTablesAndQueries(String tablesAndQueries) {
+    public void setQueries(String queries) {
 
-        this.tablesAndQueries = StringUtils.split(tablesAndQueries, "/");
+        this.queries = StringUtils.split(queries, "/");
     }
 }

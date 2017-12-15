@@ -50,11 +50,11 @@ public class DataSetExtractorTest {
         final String dbName = "test";
         final String id = "root";
         final String password = "root";
-        final String[] tablesAndQueries = {"user - select * from user"};
+        final String[] queries = {"user - select * from user"};
         final String outputFileName = "output";
 
         final String fileName = "test.properties";
-        final String fileContent = buildPropertiesContent(type, host, port, dbName, id, password, tablesAndQueries, outputFileName);
+        final String fileContent = buildPropertiesContent(type, host, port, dbName, id, password, queries, outputFileName);
 
         Path path = createTestFile(fileName, fileContent);
 
@@ -68,7 +68,7 @@ public class DataSetExtractorTest {
         assertThat(config.getDbName(), is(dbName));
         assertThat(config.getId(), is(id));
         assertThat(config.getPassword(), is(password));
-        assertThat(config.getTablesAndQueries(), is(tablesAndQueries));
+        assertThat(config.getQueries(), is(queries));
         assertThat(config.getOutputFileName(), is(outputFileName));
     }
 
@@ -184,7 +184,7 @@ public class DataSetExtractorTest {
     }
 
     private String buildPropertiesContent(String type, String host, String port, String dbName,
-            String id, String password, String[] tablesAndQueries, String outputFileName) {
+            String id, String password, String[] queries, String outputFileName) {
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("TYPE=").append(type).append("\n");
@@ -193,8 +193,8 @@ public class DataSetExtractorTest {
         stringBuilder.append("DB_NAME=").append(dbName).append("\n");
         stringBuilder.append("ID=").append(id).append("\n");
         stringBuilder.append("PASSWORD=").append(password).append("\n");
-        for (String tablesAndQuery : tablesAndQueries) {
-            stringBuilder.append("TABLES_AND_QUERIES=").append(tablesAndQuery).append("\n");
+        for (String query : queries) {
+            stringBuilder.append("QUERIES=").append(query).append("\n");
         }
         stringBuilder.append("OUTPUT_FILE_NAME=").append(outputFileName).append("\n");
 
