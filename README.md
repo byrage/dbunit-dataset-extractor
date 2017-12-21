@@ -15,12 +15,10 @@ If your config is all clear, DataSet xml file is created.
 5. DB_NAME = database name
 6. ID = database login id
 7. PASSWORD = database login password
-8. ROW_NAME = what you want to extract table name and query. if you want to extract all rows in table, input table name only.
+8. QUERIES = what you want to extract table name and query. if you want to extract all rows in table, input table name only.
 - All Tables = '*'
 - Table and Query Separator = '-'
 - Multiple Table Separator = '/'
-
-TODO : change ROW_NAME description, add "query.sql" description
 
 ### Example
 ```
@@ -31,5 +29,8 @@ PORT=3306
 DB_NAME=test_db
 ID=byrage
 PASSWORD=password
-ROW_NAME= user
+QUERIES=\
+  user - select * from user where id < 10 / \
+  program - select * from program where id = 5 / \
+  manager
 ```
