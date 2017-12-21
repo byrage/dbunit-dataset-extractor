@@ -204,6 +204,7 @@ public class DataSetExtractorTest {
     private String buildPropertiesContent(String type) {
 
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("OUTPUT_FILE_NAME=test\n");
         stringBuilder.append("TYPE=").append(type).append("\n");
 
         return stringBuilder.toString();

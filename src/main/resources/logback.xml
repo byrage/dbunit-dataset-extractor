@@ -10,7 +10,7 @@
     <logger name="org.dbunit" level="WARN"/>
     <logger name="ch.qos.logback" level="ERROR"/>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

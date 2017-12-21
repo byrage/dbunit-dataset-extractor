@@ -2,6 +2,7 @@ package byrage.extractor.service;
 
 import byrage.extractor.model.Config;
 import byrage.extractor.model.DbType;
+import byrage.extractor.util.ExtractUtil;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.StringUtils;
 import org.dbunit.database.*;
@@ -32,30 +33,28 @@ public class DataSetExtractor {
 
         String outputFile = "";
         try {
-            InputStream fileInputStream = new FileInputStream(CONFIG_PROPERTIES);
-            Config config = loadConfig(fileInputStream);
+            InputStream is = getInputStream(CONFIG_PROPERTIES);
+            Config config = loadConfig(is);
 
-            if (StringUtils.isBlank(config.getOutputFileName())) {
-                throw new IllegalArgumentException("output file name is invalid.");
-            } else {
-                outputFile = config.getOutputFileName() + DATA_SET_EXTENSION;
-                log.info("output file={}", outputFile);
-            }
+            outputFile = config.getOutputFileName() + DATA_SET_EXTENSION;
+            log.info("output file name={}", outputFile);
 
             IDatabaseConnection connection = getConnection(config);
-            IDataSet dataSet;
+            log.debug("connect success.");
 
+            IDataSet dataSet;
             if (config.getQueries().length == 1 && StringUtils.equals(config.getQueries()[0], ALL_TABLES)) {
                 dataSet = createAllDataSet(connection);
             } else {
                 dataSet = createDataSet(connection, config.getQueries());
             }
+            log.debug("tables={}", dataSet.getTableNames());
 
             FlatXmlDataSet.write(dataSet, new FileOutputStream(outputFile));
             return true;
         } catch (Exception e) {
             cleanFile(outputFile);
-            log.error("extracting data set is failed.", e);
+            log.error("extracting data set is failed.", e.getMessage());
             return false;
         } finally {
             try { dbConnection.close(); } catch (SQLException e) {}
@@ -64,16 +63,11 @@ public class DataSetExtractor {
     }
 
     @VisibleForTesting
-    Config loadConfig(InputStream fileInputStream) throws IOException {
+    Config loadConfig(InputStream inputStream) throws IOException {
 
-        try {
-            Properties prop = new Properties();
-            prop.load(fileInputStream);
-
-            return new Config(prop);
-        } catch (IOException e) {
-            throw new IOException("loadConfig is failed.", e);
-        }
+        Properties prop = new Properties();
+        prop.load(inputStream);
+        return getConfig(prop);
     }
 
     private IDatabaseConnection getConnection(Config config) throws Exception {
@@ -110,6 +104,21 @@ public class DataSetExtractor {
         } catch (AmbiguousTableNameException e) {
             throw new AmbiguousTableNameException("createDataSet is failed. tableName is ambiguous", e);
         }
+    }
+
+    private Config getConfig(Properties prop) {
+
+        Config config = new Config(prop);
+        if (StringUtils.isBlank(config.getOutputFileName())) {
+            throw new IllegalArgumentException("output file name is blank.");
+        }
+
+        return config;
+    }
+
+    private FileInputStream getInputStream(String fileName) throws IOException {
+
+        return new FileInputStream(ExtractUtil.readResource(fileName).getFile());
     }
 
     private IDataSet createAllDataSet(IDatabaseConnection connection) throws SQLException {
